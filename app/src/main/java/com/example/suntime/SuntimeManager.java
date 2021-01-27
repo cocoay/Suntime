@@ -11,6 +11,9 @@ import com.luckycatlabs.sunrisesunset.SunriseSunsetCalculator;
 public class SuntimeManager {
 
     public static SuntimeItem getSuntime(Location loc) {
+        if (loc == null) {
+            return null;
+        }
         double latitude = loc.getLatitude();
         double longitude = loc.getLongitude();
         int timezone = getTimezone(longitude);
@@ -31,12 +34,14 @@ public class SuntimeManager {
 
                 Calendar sunrise = calculator.getOfficialSunriseCalendarForDate(day);
                 Calendar sunset = calculator.getOfficialSunsetCalendarForDate(day);
-                int sunriseHour = adjustHour(sunrise.get(Calendar.HOUR_OF_DAY), timezone);
-                int sunsetHour = adjustHour(sunset.get(Calendar.HOUR_OF_DAY), timezone);
-                items.add(new Integer(sunriseHour));
-                items.add(new Integer(sunrise.get(Calendar.MINUTE)));
-                items.add(new Integer(sunsetHour));
-                items.add(new Integer(sunset.get(Calendar.MINUTE)));
+                if (sunrise != null && sunset != null) {
+                    int sunriseHour = adjustHour(sunrise.get(Calendar.HOUR_OF_DAY), timezone);
+                    int sunsetHour = adjustHour(sunset.get(Calendar.HOUR_OF_DAY), timezone);
+                    items.add(new Integer(sunriseHour));
+                    items.add(new Integer(sunrise.get(Calendar.MINUTE)));
+                    items.add(new Integer(sunsetHour));
+                    items.add(new Integer(sunset.get(Calendar.MINUTE)));
+                }
             }
         }
         int length = items.size();
@@ -49,6 +54,9 @@ public class SuntimeManager {
     }
 
     public static String getSuntimeTest(Location loc) {
+        if (loc == null) {
+            return null;
+        }
         double latitude = loc.getLatitude();
         double longitude = loc.getLongitude();
         int timezone = getTimezone(longitude);
@@ -72,11 +80,13 @@ public class SuntimeManager {
 
                 Calendar sunrise = calculator.getOfficialSunriseCalendarForDate(day);
                 Calendar sunset = calculator.getOfficialSunsetCalendarForDate(day);
-                int sunriseHour = adjustHour(sunrise.get(Calendar.HOUR_OF_DAY), timezone);
-                int sunsetHour = adjustHour(sunset.get(Calendar.HOUR_OF_DAY), timezone);
-                String sunriseStr = String.format("%02d", sunriseHour) + ":" + String.format("%02d", sunrise.get(Calendar.MINUTE));
-                String sunsetStr = String.format("%02d", sunsetHour) + ":" + String.format("%02d", sunset.get(Calendar.MINUTE));
-                value += sdf.format(day.getTime()) + " sunrise" +" " + sunriseStr + " sunset" + " " + sunsetStr + "\n";
+                if (sunrise != null && sunset != null) {
+                    int sunriseHour = adjustHour(sunrise.get(Calendar.HOUR_OF_DAY), timezone);
+                    int sunsetHour = adjustHour(sunset.get(Calendar.HOUR_OF_DAY), timezone);
+                    String sunriseStr = String.format("%02d", sunriseHour) + ":" + String.format("%02d", sunrise.get(Calendar.MINUTE));
+                    String sunsetStr = String.format("%02d", sunsetHour) + ":" + String.format("%02d", sunset.get(Calendar.MINUTE));
+                    value += sdf.format(day.getTime()) + " sunrise" +" " + sunriseStr + " sunset" + " " + sunsetStr + "\n";
+                }
             }
         }
         return value;

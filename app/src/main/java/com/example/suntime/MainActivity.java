@@ -29,8 +29,6 @@ public class MainActivity extends AppCompatActivity {
         EditText latitudeInput = findViewById(R.id.latitude);
         EditText longitudeInput = findViewById(R.id.longitude);
         TextView textView = findViewById(R.id.textView);
-        latitudeInput.clearFocus();
-        longitudeInput.clearFocus();
 
         double latitude = Double.parseDouble(latitudeInput.getText().toString());
         double longitude = Double.parseDouble(longitudeInput.getText().toString());
@@ -41,5 +39,4 @@ public class MainActivity extends AppCompatActivity {
         String text = SuntimeManager.getSuntimeTest(loc);
         textView.setText(text);
     }
-
 }
