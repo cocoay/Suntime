@@ -15,7 +15,7 @@ import androidx.core.app.ActivityCompat;
 
 public class LocationUtils implements LocationListener {
 
-    private Activity activity;
+    private final Activity activity;
     public final LocationManager manager;
     public final LocationHandler handle;
     public static final int REQUEST_CODE = 10086;
@@ -37,8 +37,7 @@ public class LocationUtils implements LocationListener {
     }
 
     public boolean isLocationServicesEnabled() {
-        boolean gps = manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        return gps;
+        return manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
     }
 
     public boolean authorizationStatus() {
