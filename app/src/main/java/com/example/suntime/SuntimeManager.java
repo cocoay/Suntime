@@ -3,10 +3,14 @@ package com.example.suntime;
 import android.location.Location;
 import android.util.Base64;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import com.luckycatlabs.sunrisesunset.SunriseSunsetCalculator;
+import com.luckycatlabs.sunrisesunset.Zenith;
+import com.luckycatlabs.sunrisesunset.calculator.SolarEventCalculator;
+
 
 public class SuntimeManager {
 
@@ -19,7 +23,7 @@ public class SuntimeManager {
         int timezone = getTimezone(longitude);
 
         com.luckycatlabs.sunrisesunset.dto.Location location = new com.luckycatlabs.sunrisesunset.dto.Location(String.valueOf(latitude), String.valueOf(longitude));
-        SunriseSunsetCalculator calculator = new SunriseSunsetCalculator(location, "UTC");
+        SuntimeCalculator calculator = new SuntimeCalculator(location, "UTC");
 
         ArrayList<Integer> items = new ArrayList();
         for (int i = 0; i < 12; i++) {
@@ -62,7 +66,7 @@ public class SuntimeManager {
         int timezone = getTimezone(longitude);
 
         com.luckycatlabs.sunrisesunset.dto.Location location = new com.luckycatlabs.sunrisesunset.dto.Location(String.valueOf(latitude), String.valueOf(longitude));
-        SunriseSunsetCalculator calculator = new SunriseSunsetCalculator(location, "UTC");
+        SuntimeCalculator calculator = new SuntimeCalculator(location, "UTC");
 
         SimpleDateFormat sdf = new SimpleDateFormat();
         sdf.applyPattern("yyyy-MM-dd");
@@ -121,5 +125,71 @@ public class SuntimeManager {
 
     private static byte int2byte(int i) {
         return new Integer(i).byteValue();
+    }
+}
+
+
+
+class SuntimeCalculator {
+
+    private com.luckycatlabs.sunrisesunset.dto.Location location;
+    private SuntimeEventCalculator calculator;
+
+    public SuntimeCalculator(com.luckycatlabs.sunrisesunset.dto.Location location, String timeZoneIdentifier) {
+        this.location = location;
+        this.calculator = new SuntimeEventCalculator(location, timeZoneIdentifier);
+    }
+
+    public Calendar getOfficialSunriseCalendarForDate(Calendar date) {
+        return calculator.computeSunriseCalendar(Zenith.OFFICIAL, date);
+    }
+
+    public Calendar getOfficialSunsetCalendarForDate(Calendar date) {
+        return calculator.computeSunsetCalendar(Zenith.OFFICIAL, date);
+    }
+}
+
+
+class SuntimeEventCalculator extends SolarEventCalculator {
+    public SuntimeEventCalculator(com.luckycatlabs.sunrisesunset.dto.Location location, String timeZoneIdentifier) {
+        super(location, timeZoneIdentifier);
+    }
+
+    @Override
+    protected Calendar getLocalTimeAsCalendar(BigDecimal localTimeParam, Calendar date) {
+        if (localTimeParam == null) {
+            return null;
+        }
+
+        // Create a clone of the input calendar so we get locale/timezone information.
+        Calendar resultTime = (Calendar) date.clone();
+
+        BigDecimal localTime = localTimeParam;
+        if (localTime.compareTo(BigDecimal.ZERO) == -1) {
+            localTime = localTime.add(BigDecimal.valueOf(24.0D));
+            resultTime.add(Calendar.HOUR_OF_DAY, -24);
+        }
+        String[] timeComponents = localTime.toPlainString().split("\\.");
+        int hour = Integer.parseInt(timeComponents[0]);
+
+        BigDecimal minutes = new BigDecimal("0." + timeComponents[1]);
+        // 使用RoundingMode.DOWN向下取整
+        minutes = minutes.multiply(BigDecimal.valueOf(60)).setScale(0, RoundingMode.DOWN);
+        if (minutes.intValue() == 60) {
+            minutes = BigDecimal.ZERO;
+            hour += 1;
+        }
+        if (hour == 24) {
+            hour = 0;
+        }
+
+        // Set the local time
+        resultTime.set(Calendar.HOUR_OF_DAY, hour);
+        resultTime.set(Calendar.MINUTE, minutes.intValue());
+        resultTime.set(Calendar.SECOND, 0);
+        resultTime.set(Calendar.MILLISECOND, 0);
+        resultTime.setTimeZone(date.getTimeZone());
+
+        return resultTime;
     }
 }
