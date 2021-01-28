@@ -13,7 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 
 
-public class LocationUtlis implements LocationListener {
+public class LocationUtils implements LocationListener {
 
     private Activity activity;
     public final LocationManager manager;
@@ -30,7 +30,7 @@ public class LocationUtlis implements LocationListener {
         void failure(LocationError error);
     }
 
-    public LocationUtlis(@NonNull Activity activity, LocationHandler handle) {
+    public LocationUtils(@NonNull Activity activity, LocationHandler handle) {
         this.activity = activity;
         this.handle = handle;
         this.manager = (LocationManager)activity.getSystemService(Context.LOCATION_SERVICE);

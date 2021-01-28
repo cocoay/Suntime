@@ -15,7 +15,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText latitudeInput;
     private EditText longitudeInput;
     private TextView textView;
-    private LocationUtlis locationManager;
+    private LocationUtils locationManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
         this.longitudeInput = findViewById(R.id.longitude);
         this.textView = findViewById(R.id.textView);
 
-        this.locationManager = new LocationUtlis(this, new LocationUtlis.LocationHandler() {
+        this.locationManager = new LocationUtils(this, new LocationUtils.LocationHandler() {
             @Override
             public void success(Location location) {
                 double latitude = location.getLatitude();
@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void failure(LocationUtlis.LocationError error) {
+            public void failure(LocationUtils.LocationError error) {
                 switch (error) {
                     case notEnable:
                         System.out.println("定位服务不可用");
@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == LocationUtlis.REQUEST_CODE) {
+        if (requestCode == LocationUtils.REQUEST_CODE) {
             if (grantResults.length <= 0) {
                 // If user interaction was interrupted, the permission request is cancelled and you
                 // receive empty arrays.
@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
                 locationManager.requestLocation();
             } else {
                 // Permission denied.
-                locationManager.handle.failure(LocationUtlis.LocationError.denied);
+                locationManager.handle.failure(LocationUtils.LocationError.denied);
             }
         }
     }
