@@ -2,7 +2,11 @@
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.suntime">
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+
+    <!--位置信息-->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <!--android 10.0使用wifi api新添加的权限-->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:allowBackup="true"
