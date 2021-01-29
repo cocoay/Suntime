@@ -2,6 +2,8 @@ package com.example.suntime;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -28,7 +30,6 @@ public class MainActivity extends AppCompatActivity {
     private EditText longitudeInput;
     private TextView textView;
     private LocationUtils locationManager;
-    private boolean isWifi = false;
     private KProgressHUD hud;
 
     @Override
@@ -44,26 +45,25 @@ public class MainActivity extends AppCompatActivity {
         this.locationManager = new LocationUtils(this, new LocationUtils.LocationHandler() {
             @Override
             public void success(Location location) {
-                if (isWifi) {
-                    setupWifi();
-                } else  {
-                    double latitude = location.getLatitude();
-                    double longitude = location.getLongitude();
-                    latitudeInput.setText("" + latitude);
-                    longitudeInput.setText("" + longitude);
-                    String text = SuntimeManager.getSuntimeTest(location);
-                    textView.setText(text);
-                }
+                double latitude = location.getLatitude();
+                double longitude = location.getLongitude();
+                latitudeInput.setText("" + latitude);
+                longitudeInput.setText("" + longitude);
+                String text = SuntimeManager.getSuntimeTest(location);
+                textView.setText(text);
             }
 
             @Override
-            public void failure(LocationUtils.LocationError error) {
-                switch (error) {
+            public void status(LocationUtils.LocationStatus status) {
+                switch (status) {
                     case notEnable:
                         System.out.println("定位服务不可用");
                         break;
                     case denied:
                         System.out.println("无权限");
+                        break;
+                    case granted:
+                        setupWifi();
                         break;
                     default :
                         break;
@@ -86,16 +86,14 @@ public class MainActivity extends AppCompatActivity {
 
     public void locationClick(View view){
         closeInputView(view);
-        isWifi = false;
 
         locationManager.requestLocation();
     }
 
     public void wifiClick(View view){
         closeInputView(view);
-        isWifi = true;
 
-        locationManager.requestLocation();
+        locationManager.requestAuthorization();
     }
 
     public void networkClick(View view){
@@ -132,22 +130,6 @@ public class MainActivity extends AppCompatActivity {
     private void closeInputView(View view) {
         InputMethodManager inputMethodManager = (InputMethodManager) this.getSystemService(this.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == LocationUtils.REQUEST_CODE) {
-            if (grantResults.length <= 0) {
-                // If user interaction was interrupted, the permission request is cancelled and you
-                // receive empty arrays.
-            } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                locationManager.requestLocation();
-            } else {
-                // Permission denied.
-                locationManager.handle.failure(LocationUtils.LocationError.denied);
-            }
-        }
     }
 
     public static MainActivity shared() {

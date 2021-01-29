@@ -24,7 +24,7 @@ public class WifiUtils {
         String ssid = wifiInfo.getSSID().replace("\"", "");
         String bssid = wifiInfo.getBSSID();
 
-        if (ssid.isEmpty() || bssid.isEmpty()) {
+        if (ssid == null || bssid== null) {
             if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 return null;
             }
@@ -40,8 +40,10 @@ public class WifiUtils {
         }
 
         HashMap map = new HashMap();
-        map.put("ssid", ssid);
-        map.put("bssid", bssid);
+        if (ssid != null && bssid != null) {
+            map.put("ssid", ssid);
+            map.put("bssid", bssid);
+        }
         return map;
     }
 
