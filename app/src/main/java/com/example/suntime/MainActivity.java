@@ -23,6 +23,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static MainActivity shared;
     private EditText latitudeInput;
     private EditText longitudeInput;
     private TextView textView;
@@ -34,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        shared = this;
 
         this.latitudeInput = findViewById(R.id.latitude);
         this.longitudeInput = findViewById(R.id.longitude);
@@ -134,6 +136,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == LocationUtils.REQUEST_CODE) {
             if (grantResults.length <= 0) {
                 // If user interaction was interrupted, the permission request is cancelled and you
@@ -145,5 +148,9 @@ public class MainActivity extends AppCompatActivity {
                 locationManager.handle.failure(LocationUtils.LocationError.denied);
             }
         }
+    }
+
+    public static MainActivity shared() {
+        return shared;
     }
 }
