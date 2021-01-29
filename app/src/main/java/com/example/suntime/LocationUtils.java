@@ -12,6 +12,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 
+import java.util.List;
+
 
 public class LocationUtils implements LocationListener {
 
@@ -54,11 +56,15 @@ public class LocationUtils implements LocationListener {
                 ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // 请求权限
             ActivityCompat.requestPermissions(activity,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
                     REQUEST_CODE);
             return;
         }
-        manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 1000, this);
+        List<String> providers = manager.getAllProviders();
+        for (String provider : providers) {
+            manager.requestLocationUpdates(provider, 10000, 1000, this);
+        }
+
     }
 
 
