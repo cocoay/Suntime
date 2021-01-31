@@ -27,7 +27,7 @@ public class LocationUtils implements LocationListener {
     public LocationManager manager;
     private final FragmentManager fragmentManager;
     private LocationFragment fragment;
-    public boolean isAuthorization = false;
+    public boolean isRequestLocation = false;
 
 
     public enum LocationStatus {
@@ -74,7 +74,7 @@ public class LocationUtils implements LocationListener {
     }
 
     public void requestAuthorization() {
-        isAuthorization = true;
+        isRequestLocation = false;
         if (isLocationServicesEnabled() == false) {
             handle.status(LocationStatus.notEnable);
             return;
@@ -89,7 +89,7 @@ public class LocationUtils implements LocationListener {
     }
 
     public void requestLocation() {
-        isAuthorization = false;
+        isRequestLocation = true;
         if (isLocationServicesEnabled() == false) {
             handle.status(LocationStatus.notEnable);
             return;
@@ -153,9 +153,8 @@ public class LocationUtils implements LocationListener {
                 // If user interaction was interrupted, the permission request is cancelled and you
                 // receive empty arrays.
             } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                if (locationManager.isAuthorization) {
-                    locationManager.handle.status(LocationUtils.LocationStatus.granted);
-                } else {
+                locationManager.handle.status(LocationUtils.LocationStatus.granted);
+                if (locationManager.isRequestLocation) {
                     locationManager.requestLocation();
                 }
             } else {
