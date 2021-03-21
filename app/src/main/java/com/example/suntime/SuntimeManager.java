@@ -53,7 +53,7 @@ public class SuntimeManager {
         for (int i = 0; i < length; i++) {
             bytes[i] = int2byte(items.get(i));
         }
-        String timeBase64 = Base64.encodeToString(bytes, Base64.DEFAULT);
+        String timeBase64 = Base64.encodeToString(bytes, Base64.NO_WRAP);
         return new SuntimeItem(timezone, timeBase64);
     }
 

@@ -34,6 +34,11 @@ public class MainActivity extends AppCompatActivity {
         this.longitudeInput = findViewById(R.id.longitude);
         this.textView = findViewById(R.id.textView);
 
+        String a = "1";
+        String b = ILCryptoManager.aesEncrypted(a);
+        String c = ILCryptoManager.aesDecrypted(b);
+
+
         this.locationManager = new LocationUtils(this, new LocationUtils.LocationHandler() {
             @Override
             public void success(Location location) {
@@ -74,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
         loc.setLongitude(longitude);
         String text = SuntimeManager.getSuntimeTest(loc);
         textView.setText(text);
+
     }
 
     public void locationClick(View view){
